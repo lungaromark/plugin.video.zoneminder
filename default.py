@@ -137,6 +137,13 @@ def createauthstring():
    authurl = "&username=%s&password=%s&action=login" % (__addon__.getSetting('username').strip(), __addon__.getSetting('password').strip())
    videoauthurl = "&user=%s&pass=%s" % (__addon__.getSetting('username').strip(), __addon__.getSetting('password').strip())
  return authurl, videoauthurl
+
+def bitrate(s):
+  try:
+    int(s)
+    return int(s) * ( 1024 * 1024 ) # Megabits
+  except value_error:
+    return int(s[-1:]) * 100 * 1024 # Kilobits
  
 def listcameras():
  zmurl = geturl(__addon__.getSetting('zmurl'))
@@ -154,7 +161,7 @@ def listcameras():
  else:
   match = re.compile("'zmWatch([0-9]+)', 'watch', ([1-9][0-9]+), ([1-9][0-9]+) \); return\( false \);" + '"' + ">(.*?)</a>").findall(doc)
   if len(match) > 0:
-   qualityurl = "&bitrate=%s&maxfps=%s" % (__addon__.getSetting('bitrate'), __addon__.getSetting('fps'))
+   qualityurl = "&bitrate=%s&maxfps=%s" % ( bitrate( __addon__.getSetting('bitrate') ) , __addon__.getSetting('fps'))
    for id, width, height, name in match:
     info = defaultinfo()
     info["Title"] = name
